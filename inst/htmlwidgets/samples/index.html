@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <style>
+    body {
+        margin: 0;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+    #modal {
+        position: fixed;
+        left: 150px;
+        top: 20px;
+        z-index: 1;
+        background: white;
+        border: 1px black solid;
+        box-shadow: 10px 10px 5px #888888;
+        display: none;
+    }
+
+    #content {
+        max-height: 400px;
+        overflow: auto;
+    }
+
+    #modalClose {
+        position: absolute;
+        top: -0px;
+        right: -0px;
+        z-index: 1;
+    }
+
+    .clickable {
+        cursor: pointer;
+    }
+
+    [id^=info] {
+        cursor: pointer;
+    }
+
+    svg image {
+        opacity: 0.5;
+        transition: 1s opacity;
+    }
+
+    svg:hover image {
+        opacity: 1;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="svgimg"></div>
+    <div id="modal">
+        <div id="content"></div>
+        <button id="modalClose" onclick="d3.select('#modal').style('display','none');">X</button>
+        </div>
+    </div>
+    <svg id="manualSvg">
+        <g>
+            <rect id="rect" class="clickable" x="112.6" y="31.4" width="35.2" height="69.3" style="vector-effect: non-scaling-stroke; fill: rgb(0, 125, 186);">
+            </rect>
+        </g>
+    </svg>
+    <script id="main-tpl" type="text/html">
+        <div id="my-template">
+            <h3>{name}</h3>
+            <br> {title}
+            <br> {email}
+        </div>
+        </div>
+        <div id="footnote">{note}</div>
+    </script>
+    <script>
+    var compileTemplate = function(_template, _values) {
+        return [].concat(_values).map(function(d, i) {
+            return _template.replace(/{([^}]*)}/g, function(s, key) { return d[key] || ''; });
+        }).join('\n');
+    };
+
+    var values = {
+        name: "Nombre",
+        title: "Título",
+        note: "NOTAS"
+    };
+
+    var compiledTemplate = compileTemplate(d3.select('#main-tpl').html(), values);
+
+    console.log(compiledTemplate)
+
+
+    // Feel free to change or delete any of the code you see in this editor!
+    var svg = d3.select("body").append("svg");
+
+    var svgstr = '<circle id="circle" class="clickable" r="16" fill="red"></circle>';
+
+    d3.select("#manualSvg")
+        .append("g")
+        .attr("transform", function(d) { return "translate(" + [50, 50] + ")"; })
+        .html(svgstr);
+
+    var showModal = function(id) {
+        // var newContent = "<h3>hola " + id + "</h3>";
+        var newContent = compileTemplate(d3.select('#main-tpl').html(), { title: id, name: "NOMBRE" });
+        d3.select("#modal")
+            .style("display", "block")
+            .select("#content").html(newContent);
+        console.log("Hello Modal")
+    }
+
+
+    d3.xml("cocina.svg").mimeType("image/svg+xml").get(function(error, xml) {
+        var importedNode = document.importNode(xml.documentElement, true);
+        d3.select("#svgimg").node().appendChild(importedNode);
+
+        var svgimg = d3.select("#svgimg").select("svg")
+        svgimg.selectAll("[id^=info]")
+            .on("click",function(d, i) {
+                        id = this.id;
+                        showModal(id);
+                        console.log("Hello Click", id)
+            })
+    });
+    </script>
+</body>

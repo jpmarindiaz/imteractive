@@ -1,0 +1,15 @@
+Package: imteractive
+Title: R Htmlwidget for d3.js based interactive images
+Version: 0.0.2
+Date: 2015-03-20
+Author: Juan Pablo Marin Diaz
+Maintainer: Juan Pablo Marin Diaz <jpmarindiaz@gmail.com>
+Description: R Htmlwidget for d3.js based interactive images
+Depends:
+    R (>= 3.0.0),
+    htmlwidgets,
+    knitr,
+    tidyverse
+License: MIT + file LICENSE
+LazyData: true
+RoxygenNote: 6.0.1
