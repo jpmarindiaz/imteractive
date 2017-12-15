@@ -3,18 +3,30 @@
 #' @export
 imteractive <- function(img, d = NULL,
                         template = NULL,
+                        styles = NULL,
                         width = NULL, height = NULL,...) {
 
   args <- list(...)
 
   img <- make_image(img, d = d)
 
+  styles <- get_styles(styles)
+
   settings <- list(
-    maxWidth = args$maxWidth
+    maxWidth = args$maxWidth,
+    template = template,
+    styles = styles,
+    debug = TRUE,
+    fill = TRUE,
+    clickable = TRUE,
+    pointer = TRUE,
+    modal = TRUE
   )
+  settings <- modifyList(settings, args)
   x <- list(
     image = img$image,
     type = img$type,
+    data = d,
     settings = settings
   )
   if(!is.null(args$debug)) str(x)
@@ -43,7 +55,7 @@ imteractiveOutput <- function(outputId, width = '100%', height = '500px'){
 #' Widget render function for use in Shiny
 #'
 #' @export
-renderimteractive <- function(expr, env = parent.frame(), quoted = FALSE) {
+renderImteractive <- function(expr, env = parent.frame(), quoted = FALSE) {
   if (!quoted) { expr <- substitute(expr) } # force quoted
   shinyRenderWidget(expr, imteractiveOutput, env, quoted = TRUE)
 }

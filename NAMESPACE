@@ -3,5 +3,5 @@
 export("%||%")
 export(imteractive)
 export(imteractiveOutput)
-export(renderimteractive)
+export(renderImteractive)
 import(htmlwidgets)

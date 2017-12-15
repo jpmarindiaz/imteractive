@@ -60,7 +60,7 @@
     <div id="modal">
         <div id="content"></div>
         <button id="modalClose" onclick="d3.select('#modal').style('display','none');">X</button>
-        </div>
+    </div>
     </div>
     <svg id="manualSvg">
         <g>
@@ -121,10 +121,23 @@
 
         var svgimg = d3.select("#svgimg").select("svg")
         svgimg.selectAll("[id^=info]")
-            .on("click",function(d, i) {
-                        id = this.id;
-                        showModal(id);
-                        console.log("Hello Click", id)
+            .on("click", function(d, i) {
+                id = this.id;
+                showModal(id);
+                console.log("Hello Click", id)
+            })
+    });
+
+    d3.xml("alacena-audios.svg").mimeType("image/svg+xml").get(function(error, xml) {
+        var importedNode = document.importNode(xml.documentElement, true);
+        d3.select("#svgimg").node().appendChild(importedNode);
+
+        var svgimg = d3.select("#svgimg").select("svg")
+        svgimg.selectAll("[id^=info]")
+            .on("click", function(d, i) {
+                id = this.id;
+                showModal(id);
+                console.log("Hello Click", id)
             })
     });
     </script>

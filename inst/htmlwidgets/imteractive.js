@@ -4,30 +4,47 @@ HTMLWidgets.widget({
     type: "output",
 
     initialize: function(el, width, height) {
-        return ({})
+        return {}
     },
 
     resize: function(el, width, height, instance) {
-        // instance.draw();
     },
 
     renderValue: function(el, x, instance) {
 
-        var imteractive = instance;
         var vizId = el.id;
 
-        // Modal Container Div
-        var modalContainer = '<div id="modal"><div id="content"></div>' + 
-        '<button id="modalClose" onclick="d3.select(\'#modal\').style(\'display\',\'none\');">X</button>' +
-        '</div></div>';
-        d3.select("#" + el.id).html(modalContainer);
-        // tpl Container Div
+
+        var data = HTMLWidgets.dataframeToD3(x.data);
+        var debug = x.settings.debug;
+        var clickable = x.settings.clickable;
+        var fill = x.settings.fill;
+        var pointer = x.settings.pointer;
+        var modal = x.settings.modal;
+
+
+        if (debug) {
+            console.log("x", x)
+            console.log("data", data)
+            console.log("settings", x.settings)
+            console.log("vizId", vizId)
+        }
+
+        //Styles
+        d3.select("#" + el.id)
+            .append("style")
+            .html(x.settings.styles);
+
+        // Modal + Tpl Container Div
+        var modalContainer = '<div id="modal"><div id="content"></div>' +
+            '<button id="modalClose" onclick="d3.select(\'#modal\').style(\'display\',\'none\');">X</button>' +
+            '</div></div>\n';
         var tplContainer = '<script id="main-tpl" type="text/html"></script>';
-        d3.select("#" + el.id).html(tplContainer);
+        d3.select("#" + el.id).append("div").html(modalContainer + tplContainer);
         var template = x.settings.template || "id: {id}";
         d3.select("#main-tpl").html(template)
 
-        var maxWidth = x.settings.maxWidth || 400;
+        var maxWidth = x.settings.maxWidth || "100%";
         var width = Math.min(el.offsetWidth, maxWidth);
         var height = el.offsetHeight;
         console.log(width, height)
@@ -79,13 +96,39 @@ HTMLWidgets.widget({
             console.log("Hello Modal")
         }
 
-        var svgimg = d3.select("svg")
-        svgimg.selectAll("[id^=info]")
-            .on("click", function(d, i) {
-                id = this.id;
-                showModal(id, values);
+        var svgimg = d3.select("svg");
+        var idsSelector = data.map(function(x) { return ("#" + x.id) }).reverse().join(", ");
+        if(debug){console.log(idsSelector)}
+        var svgimgsel = svgimg.selectAll(idsSelector)
+            .data(data, function(d) { return d ? d.id : this.id; });
+
+        if(fill)
+            svgimgsel.style("fill",function(d){
+                console.log(d)
+                return(d.color)
+            })
+        if(pointer){
+            d3.selectAll(idsSelector).style("cursor", "pointer");
+        }
+        if(clickable){
+            d3.selectAll(idsSelector).style("cursor", "pointer");
+            svgimgsel.on("click", function(d, i) {
+                console.log("d on click", d)
+                if (typeof Shiny != "undefined") {
+                    Shiny.onInputChange(vizId + '_clicked_id', d.id)
+                    var now = new Date().getTime();
+                    Shiny.onInputChange('imteractive_clicked', { id: d.id, timestamp: now })
+                    console.log("CLICKED REGION", { id: d.id, time: now })
+                }
+                var id = this.id;
+                var values = data.filter(function(d) { return d.id == 1 })[0];
+                console.log("values", d)
+                if(modal){
+                    showModal(id, d);                
+                }
                 console.log("Hello Click", id)
             })
+        }
 
     }
 });

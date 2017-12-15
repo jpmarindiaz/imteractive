@@ -4,8 +4,8 @@
 \alias{imteractive}
 \title{imteractive}
 \usage{
-imteractive(img, d = NULL, template = NULL, width = NULL, height = NULL,
-  ...)
+imteractive(img, d = NULL, template = NULL, styles = NULL, width = NULL,
+  height = NULL, ...)
 }
 \description{
 imteractive
