@@ -8,7 +8,12 @@ library(imteractive)
 
 # Mapa Colombia
 img <- system.file("htmlwidgets/samples/colombia_map.svg", package = "imteractive")
-imteractive(img, debug = TRUE, maxWidth = 1440)
+styles <- '
+svg {
+background-color: green;
+}
+'
+imteractive(img, debug = TRUE, maxWidth = 1440, styles = styles)
 
 e <- imteractive(img, debug = TRUE, maxWidth = 400)
 saveWidget(e,"~/Desktop/tmp.html")

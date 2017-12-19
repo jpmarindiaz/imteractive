@@ -56,10 +56,6 @@ z-index: 1;
 cursor: pointer;
 }
 
-[id^=info] {
-cursor: pointer;
-}
-
 svg image {
 opacity: 0.5;
 transition: 1s opacity;
